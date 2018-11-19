@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script type="text/javascript" src="js/jquery.js" ></script>
+		<script type="text/javascript" src="lbxlog.js" ></script>
+	</head>
+	<style>
+		body{
+			margin: 0;
+			width:100%;
+			overflow: hidden;
+		}
+		/*动画展示区*/
+		.divtree{
+			/*background:deepskyblue;*/
+			margin:auto;
+			position:relative;
+		}
+		/*预加载的发光进度条*/
+		.barContro_space {
+		    background: grey none repeat scroll 0 0;
+		    border-radius: 5px;
+		    position:absolute;
+		    left:25%;
+		    right:25%;
+		    top:100px;
+		}
+		.yoda {
+		    background-color: #ffffff;
+		    border-radius: 2px;
+		    box-shadow: 0 0 10px 1px #68b37a, 0 0 1px #68b37a, 0 0 1px #68b37a, 0 0 1px #68b37a, 0 0 1px #68b37a, 0 0 1px #68b37a, 0 0 1px #68b37a;
+		    display: block;
+		    width: 0;
+		    height:6px;
+		    transition:width 0.5s linear;
+		    -webkit-transition:width 0.5s linear;
+		    -moz-transition:width 0.5s linear;
+		}
+		.yoda_val{
+			position:absolute;
+			right:10px;
+			bottom:-40px;
+			font-size:24px;
+			font-weight:bold;
+			color:#68b37a;
+			text-align:right;
+		}
+		/*渐变翻页*/
+		.pagecommon{
+			position: absolute;
+			left:0;
+			top:0;
+			transition: opacity 2s;
+			-moz-transition: opacity 2s;
+			-webkit-transition: opacity 2s;
+			width:100%;
+			height:100%;
+		}
+		.opacity0{
+			opacity: 0;
+		}
+		.opacity1{
+			opacity: 1;
+		}
+		.page1{
+			background:#494a5f;
+		}
+		.page2{
+			background:#fff;
+		}
+		.page3{
+			background:#8def2b;
+		}
+		.page4{
+			background:#65fae3;
+		}
+		.bupre{
+			position: absolute;
+			bottom:10px;right:70%;
+			width:18px;
+			height:32px;
+			background:url("img/changepageicon.png") no-repeat 0 0;
+		}
+		.bunext{
+			position: absolute;
+			bottom:10px;left:70%;
+			width:18px;
+			height:32px;
+			background:url("img/changepageicon.png") no-repeat 0 -32px;
+		}
+		/*闪动up*/
+		.upicon{
+			position:fixed;
+			left:50%;
+			margin-left: -15px;
+			bottom:0;
+			height:100px;
+			display: none;
+		}
+		.upicon img{
+			width:30px;
+			height:30px;
+			position:absolute;
+			left:0;
+			bottom:0;
+			animation: myanimation 1.5s infinite;
+			-moz-animation: myanimation 1.5s infinite;
+			-webkit-animation: myanimation 1.5s infinite;
+			-ms-animation: myanimation 1.5s infinite;
+			-o-animation: myanimation 1.5s infinite;
+			animation-timing-function:ease-out;
+			-moz-animation-timing-function:ease-out;
+			-webkit-animation-timing-function:ease-out;
+		}
+		@-moz-keyframes myanimation{
+			0%{bottom:0;opacity: 0;}
+			50%{bottom:25px;opacity: 1;}
+			100%{bottom:50px;opacity: 0;}
+		}
+		@-webkit-keyframes myanimation{
+			0%{bottom:0;opacity: 0;}
+			50%{bottom:25px;opacity: 1;}
+			100%{bottom:50px;opacity: 0;}
+		}
+		@-ms-keyframes myanimation{
+			0%{bottom:0;opacity: 0;}
+			50%{bottom:25px;opacity: 1;}
+			100%{bottom:50px;opacity: 0;}
+		}
+		@-o-keyframes myanimation{
+			0%{bottom:0;opacity: 0;}
+			50%{bottom:25px;opacity: 1;}
+			100%{bottom:50px;opacity: 0;}
+		}
+		/*信息页个人信息展现动画*/
+		.divnone{
+			display: none;
+		}
+		.toptodown{
+			position: absolute;
+			top: 0;
+			left: 0;
+			animation:bounceInDown 1s ;
+			-moz-animation:bounceInDown 1s ;
+			-webkit-animation:bounceInDown 1s ;
+			display: block;
+		}
+		.lefttoright{
+			position: absolute;
+			top: 0;
+			left: 5%;
+			animation:bounceInLeft 1s 1;
+			-moz-animation:bounceInLeft 1s ;
+			-webkit-animation:bounceInLeft 1s ;
+			display: block;
+		}
+		.righttoleft{
+			position: absolute;
+			top: 0;
+			right: 5%;
+			animation:bounceInRight 1s 1;
+			-webkit-animation:bounceInRight 1s ;
+			-moz-animation:bounceInRight 1s ;
+			display: block;
+		}
+		@keyframes bounceInDown {
+			0%, 60%, 75%, 90%, 100% {
+				animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				transform: translate3d(0, -3000px, 0);
+			}
+			60% {
+				opacity: 1;
+				transform: translate3d(0, 25px, 0);
+			}
+			75% {
+				transform: translate3d(0, -5px, 0);
+			}
+			90% {
+				transform: translate3d(0, 3px, 0);
+			}
+			100% {
+				transform: none;
+			}
+		}
+		@keyframes bounceInLeft {
+			0%, 60%, 75%, 90%, 100% {
+				animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				transform: translate3d(-3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				transform: translate3d(25px, 0, 0);
+			}
+			75% {
+				transform: translate3d(-10px, 0, 0);
+			}
+			90% {
+				transform: translate3d(5px, 0, 0);
+			}
+			100% {
+				transform: none;
+			}
+		}
+		@keyframes bounceInRight {
+			0%, 60%, 75%, 90%, 100% {
+				animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				transform: translate3d(3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				transform: translate3d(-25px, 0, 0);
+			}
+			75% {
+				transform: translate3d(10px, 0, 0);
+			}
+			90% {
+				transform: translate3d(-5px, 0, 0);
+			}
+			100% {
+				transform: none;
+			}
+		}
+		@-moz-keyframes bounceInDown {
+			0%, 60%, 75%, 90%, 100% {
+				-moz-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-moz-transform: translate3d(0, -3000px, 0);
+			}
+			60% {
+				opacity: 1;
+				-moz-transform: translate3d(0, 25px, 0);
+			}
+			75% {
+				-moz-transform: translate3d(0, -5px, 0);
+			}
+			90% {
+				-moz-transform: translate3d(0, 3px, 0);
+			}
+			100% {
+				-moz-transform: none;
+			}
+		}
+		@-moz-keyframes bounceInLeft {
+			0%, 60%, 75%, 90%, 100% {
+				-moz-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-moz-transform: translate3d(-3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				-moz-transform: translate3d(25px, 0, 0);
+			}
+			75% {
+				-moz-transform: translate3d(-10px, 0, 0);
+			}
+			90% {
+				-moz-transform: translate3d(5px, 0, 0);
+			}
+			100% {
+				-moz-transform: none;
+			}
+		}
+		@-moz-keyframes bounceInRight {
+			0%, 60%, 75%, 90%, 100% {
+				-moz-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-moz-transform: translate3d(3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				-moz-transform: translate3d(-25px, 0, 0);
+			}
+			75% {
+				-moz-transform: translate3d(10px, 0, 0);
+			}
+			90% {
+				-moz-transform: translate3d(-5px, 0, 0);
+			}
+			100% {
+				-moz-transform: none;
+			}
+		}
+		@-webkit-keyframes bounceInDown {
+			0%, 60%, 75%, 90%, 100% {
+				-webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-webkit-transform: translate3d(0, -3000px, 0);
+			}
+			60% {
+				opacity: 1;
+				-webkit-transform: translate3d(0, 25px, 0);
+			}
+			75% {
+				-webkit-transform: translate3d(0, -5px, 0);
+			}
+			90% {
+				-webkit-transform: translate3d(0, 3px, 0);
+			}
+			100% {
+				-webkit-transform: none;
+			}
+		}
+		@-webkit-keyframes bounceInLeft {
+			0%, 60%, 75%, 90%, 100% {
+				-webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-webkit-transform: translate3d(-3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				-webkit-transform: translate3d(25px, 0, 0);
+			}
+			75% {
+				-webkit-transform: translate3d(-10px, 0, 0);
+			}
+			90% {
+				-webkit-transform: translate3d(5px, 0, 0);
+			}
+			100% {
+				-webkit-transform: none;
+			}
+		}
+		@-webkit-keyframes bounceInRight {
+			0%, 60%, 75%, 90%, 100% {
+				-webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+			}
+			0% {
+				opacity: 0;
+				-webkit-transform: translate3d(3000px, 0, 0);
+			}
+			60% {
+				opacity: 1;
+				-webkit-transform: translate3d(-25px, 0, 0);
+			}
+			75% {
+				-webkit-transform: translate3d(10px, 0, 0);
+			}
+			90% {
+				-webkit-transform: translate3d(-5px, 0, 0);
+			}
+			100% {
+				-webkit-transform: none;
+			}
+		}
+		/*第四页小图片style*/
+		.page4img{
+			width:33.33%;
+			opacity: 0;
+			transition: opacity 1.5s linear;
+			-moz-transition: opacity 1.5s linear;
+			-webkit-transition: opacity 1.5s linear;
+			display:block;
+			float:left;
+		}
+		/*第四页大图片modal_style*/
+		.bigmodal{
+			left:0;top:0;right:0;bottom:0;position:fixed;
+			background: #ccc;
+			opacity:0.5;
+		}
+		/*第四页大图片style*/
+		.bigimg{
+			width:60%;margin-left:-30%;height:60%;margin-top:-30%;;
+			position:absolute;top:50%;left:50%;z-index: 1;
+		}
+	</style>
+	<!--树线style-->
+	<style id="newstyle"></style>
+	<style id="fendstyle"></style>
+	<style id="cendstyle"></style>
+	<!--ontouchmove="event.preventDefault()"添加到body中使其在手机上无法上下移动-->
+	<body ontouchmove="event.preventDefault()">
+		<div class="pagecommon page1 opacity0 opacity1">
+			<div class="divtree">
+				<!--图片预加载进度条-->
+				<div class="barContro_space">
+					<div class="yoda"></div>
+					<div class="yoda_val"></div>
+				</div>
+			</div>
+		</div>
+		<div class="pagecommon page2 opacity0">
+			<div class="divtree"></div>
+		</div>
+		<div class="pagecommon page3 opacity0">
+			<div class="divtree"></div>
+		</div>
+		<div class="pagecommon page4 opacity0">
+			<div class="divtree">
+				<div class="smallimg"></div>
+				<div id="newwindow"></div>
+			</div>
+		</div>
+		<div class="budisplay bupre"></div>
+		<div class="budisplay bunext"></div>
+		<div class="upicon">
+			<img src="img/up.png"/>
+		</div>
+		<audio autoplay="autoplay" id="audios" preload="auto" loop="loop">
+		  	<source src="voice/sad_happy.mp3" type="audio/mpeg" />
+		</audio>
+		<script>
+			//模板
+			String.prototype.format2 = function ()
+			{
+			  	var t_obj = arguments[0],temS = this;
+			  	for(var i in t_obj){
+			  		temS = temS.replace(new RegExp("\\{" + i + "\\}", "g"), t_obj[i]);
+			  	}
+			  	return temS;
+			};
+			//第四页模块模板
+			var p4modal = '<div class="bigmodal"></div>';
+				p4modal += '<img id="big{imgid}" class="bigimg" src="img/{imgsrc}"/>';
+			var p4modalapp = "";
+			//第四页图片模板
+			var page4img ='<img id="{imgid}" class="page4img" src="img/{imgsrc}"/>';
+			//第四页图片信息json数组
+			var page4imagjson = [
+			{imgid:"pa4img1",imgsrc:"show1.jpg",imgtime:2500},
+			{imgid:"pa4img2",imgsrc:"show2.jpg",imgtime:10000},
+			{imgid:"pa4img3",imgsrc:"show3.jpg",imgtime:4000},
+			{imgid:"pa4img4",imgsrc:"show4.jpg",imgtime:8500},
+			{imgid:"pa4img5",imgsrc:"show5.jpg",imgtime:1000},
+			{imgid:"pa4img6",imgsrc:"show6.jpg",imgtime:11500},
+			{imgid:"pa4img7",imgsrc:"show7.jpg",imgtime:7000},
+			{imgid:"pa4img8",imgsrc:"show8.jpg",imgtime:13000},
+			{imgid:"pa4img9",imgsrc:"show9.jpg",imgtime:5500}
+			];
+			var page4imagapp = "";
+			//第四页图片动画 及点击放大事件
+			function imgtime1(imgtime,imgid,imgsrc,P_t_time){
+				//第四页图片动画
+				setTimeout(function(){
+					$("#"+imgid+P_t_time).css("opacity",1);
+				},imgtime);
+				//第四页图片点击放大事件
+				$(".page4").on("click","#"+imgid+P_t_time,function(){
+					//alert(imgid);
+					p4modalapp = p4modal.format2({
+						imgid:imgid+P_t_time,
+						imgsrc:imgsrc
+					});
+					$("#newwindow").html(p4modalapp);
+				});
+			}
+			function putpic(){
+				//if(pagenum=3){
+					for (var i=0;i<page4imagjson.length;i++) {
+						var p_time = new Date();
+						var P_t_time = p_time.getTime();
+						var imgtime = page4imagjson[i].imgtime;
+						var imgid = page4imagjson[i].imgid;
+						var imgsrc = page4imagjson[i].imgsrc;
+						//给第四页图片模板赋值
+						page4imagapp +=page4img.format2({
+							imgid:imgid+P_t_time,
+							imgsrc:imgsrc
+						});
+						//向第四页添加图片
+						$(".page4 .smallimg").html(page4imagapp);
+						imgtime1(imgtime,imgid,imgsrc,P_t_time);
+					}
+				//}
+			}
+			//点击放大图片外的区域关闭放大图片
+			$(".page4").on("click",".bigmodal",function(){
+				$("#newwindow").html("");
+			});
+			//判断是手机还是电脑 翻页按钮 滑动提示 的显示与否
+			var p = navigator.platform;
+		    if(p.indexOf("Win") == 0||p.indexOf("Mac") == 0){
+		    	$(".upicon").html("");
+		        $(".budisplay").css("display","block");
+		    }else{
+		        $(".budisplay").css("display","none");
+		    }
+			//信息页模板
+			var infodiv = '<div style="position:relative;left:35%;top:1%;">';
+				infodiv += '<img class="divnone" id="info1{timeo}" style="width:30%;"src="img/picture.png"/>';
+			infodiv += '</div>';
+			infodiv += '<div style="position:relative;top:35%;">';
+				infodiv += '<img class="divnone" id="info2{timeo}" style="width:20%;" src="img/name.png"/>';
+				infodiv += '<img class="divnone" id="info3{timeo}" style="width:22.3%;" src="img/tjj.png"/>';
+			infodiv += '</div>';
+			infodiv += '<div style="position:relative;top:50%">';
+				infodiv += '<img class="divnone" id="info4{timeo}" style="width:19.5%;" src="img/sex.png"/>';
+				infodiv += '<img class="divnone" id="info5{timeo}" style="width:6.9%;" src="img/girl2.png"/>';
+			infodiv += '</div>';
+			infodiv += '<div style="position:relative;top:65%">';
+				infodiv += '<img class="divnone" id="info6{timeo}" style="width:35.1%;" src="img/school.png"/>';
+				infodiv += '<img class="divnone" id="info7{timeo}" style="width:46.2%;" src="img/schoolname.png"/>';
+			infodiv += '</div>';
+			infodiv += '<div style="position:relative;top:80%">';
+				infodiv += '<img class="divnone" id="info8{timeo}" style="width:19.5%;" src="img/major.png"/>';
+				infodiv += '<img class="divnone" id="info9{timeo}" style="width:68%;" src="img/majorname.png"/>';
+			infodiv += '</div>';
+			//信息页div全局叠加变量
+			var infodivadd = "";
+			/*圆花div模板*/
+			var circlediv = '<div>';
+				circlediv += '<img class="{circlename}" src="{urllist}"/>';
+				circlediv += '</div>';
+			/*圆花开始style*/
+			var circlestyle = '.{circlename}{';
+				circlestyle += 'width:0;';
+				circlestyle += 'height:0;';
+				circlestyle += 'position:absolute;';
+				circlestyle += 'top:{circletop}px;';
+				circlestyle += 'left:{circleleft}px;';
+				circlestyle += 'transition: all 1s linear;';
+				circlestyle += '-moz-transition: all 1s linear;';
+				circlestyle += '-webkit-transition: all 1s linear;';
+				circlestyle += '}';
+			/*圆花结束style*/
+			var cir_endstyle = 'body .yuanhuaend{';
+				cir_endstyle += 'width:{circleendw}px;';
+				cir_endstyle += 'height:{circleendw}px;';
+				cir_endstyle += 'margin-left:-{circleendm}px;';
+				cir_endstyle += 'margin-top:-{circleendm}px;';
+				cir_endstyle += '}';
+			/*花瓣由小变大为提高其优先级前面加个父类*/
+			var fends =	'body .changeflower{';
+				fends +='width:{fendsize}px;';
+				fends +='height:{fendsize}px;';
+				fends +='border-bottom-left-radius: {fendrsize}px;';
+				fends +='border-top-right-radius: {fendrsize}px;';
+				fends +='}';
+			var fendstyle = "";
+			//树枝线div模板
+			var newdiv = '<div class="{ewstylename}"></div>';
+			//树枝线style模板
+			var new_style = '.{ewstylename}{';
+				new_style+=	'width:0;';
+				new_style+=	'height:1px;';
+				new_style+=	'background: green;';
+				new_style+=	'transform: rotate({rotatei}deg);';
+				new_style+=	'-moz-transform: rotate({rotatei}deg);';
+				new_style+=	'-webkit-transform: rotate({rotatei}deg);';
+				new_style+=	'transform-origin: 0 center;';
+				new_style+=	'-moz-transform-origin: 0 center;';
+				new_style+=	'-webkit-transform-origin: 0 center;';
+				new_style+=	'position: absolute;';
+				new_style+=	'top:{ystarty}px;left:{xstartx}px;';
+				new_style+=	'transition:width 1s linear;';
+				new_style+=	'-moz-transition:width 1s linear;';
+				new_style+=	'-webkit-transition:width 1s linear;';
+				new_style+=	'}';
+			var styleappend = "";
+			var divappend = "";
+			//树枝线div全局叠加变量
+			var treedivappend = "";
+			//树枝线style全局叠加变量
+			var treestyleappend = "";
+			/*圆花div全局叠加变量*/
+			var circleadd_div = "";
+			/*圆花style全局叠加变量*/
+			var circleadd_style = "";
+			/*圆花end_style全局变量*/
+			var circleend_style = "";
+			//花div style 模板
+			var diva = '<div class="{addclassname}" id="{idname}"></div>';
+			var fdiv = '.{addclassname}{';
+				fdiv +='position: absolute;';
+				fdiv +='width:0px;';
+				fdiv +='height:0px;';
+				fdiv +='top:{bottom}px;';
+				fdiv +='left:{right}px;';
+				fdiv +='background: #f61e32;';
+				fdiv +='border-bottom-left-radius: 0px;';
+				fdiv +='border-top-right-radius: 0px;';
+				fdiv +='opacity: 0.7;';
+				fdiv +='transform: rotate({startrotate}deg);';
+				fdiv +='-webkit-transform: rotate({startrotate}deg);';
+				fdiv +='-moz-transform: rotate({startrotate}deg);';
+				fdiv +='transform-origin: left top;';
+				fdiv +='-moz-transform-origin: left top;';
+				fdiv +='-webkit-transform-origin: left top;';
+				fdiv +='transition:all 1s linear;';
+				fdiv +='-moz-transition:all 1s linear;';
+				fdiv +='-webkit-transition:all 1s linear;';
+				fdiv +='}';
+			//花添加div style 全局变量
+			var fdivappend = "";
+			var fstyleappend = "";
+			//五个花瓣数组
+			var flowerarray = [
+				{idname:"flower1",rotatenum:-60},
+				{idname:"flower2",rotatenum:0},
+				{idname:"flower3",rotatenum:60},
+				{idname:"flower4",rotatenum:-30},
+				{idname:"flower5",rotatenum:35}
+			];
+			//花朵的最终状态
+			function transformend(time,addclassname,startrotate,t_one_time){
+				setTimeout(function(){
+					for (var i=0;i<flowerarray.length;i++) {
+						var idname = flowerarray[i].idname;
+						var rotatenum = flowerarray[i].rotatenum;
+						var rotateend = rotatenum+startrotate;
+						$("#"+idname+addclassname+t_one_time).css("transform","rotate("+rotateend+"deg)");
+						$("#"+idname+addclassname+t_one_time).css("-webkit-transform","rotate("+rotateend+"deg)");
+						$("#"+idname+addclassname+t_one_time).css("-moz-transform","rotate("+rotateend+"deg)");
+					}
+					$("."+addclassname+t_one_time).addClass("changeflower");
+				},time);
+			}
+			//技能树画线、花
+			function drowlinetree(xstart,ystart,xend,yend,newstylename,runtime,addclassname,urllist,circlename){
+				var t_time = new Date();
+				var t_one_time = t_time.getTime();
+				var hudu = Math.atan2(yend-ystart,xend-xstart);
+				var t_rotate = hudu*180/Math.PI;
+				var t_sin = Math.sin(hudu);
+				var t_width = (yend-ystart)/t_sin;
+				treestyleappend += new_style.format2({
+					ewstylename:newstylename+t_one_time,
+					rotatei:t_rotate,
+					xstartx:xstart,
+					ystarty:ystart
+				});
+				treedivappend += newdiv.format2({
+					ewstylename:newstylename+t_one_time
+				});
+				setTimeout(function(){
+					$("."+newstylename+t_one_time).css("width",t_width+"px");
+				},runtime);	
+				if (addclassname!=undefined) {
+					var startrotate = t_rotate-45;
+					var idname;
+					fstyleappend +=fdiv.format2({
+						addclassname:addclassname+t_one_time,
+						bottom:yend,
+						right:xend,
+						startrotate:startrotate
+					});
+					for (var j=0;j<flowerarray.length;j++) {
+						idname = flowerarray[j].idname;
+						fdivappend += diva.format2({
+							addclassname:addclassname+t_one_time,
+							idname:idname+addclassname+t_one_time
+						});
+					}
+					var time = runtime+1000;
+					transformend(time,addclassname,startrotate,t_one_time);
+				}
+				if (urllist!=undefined) {
+					circleadd_div += circlediv.format2({
+						circlename:circlename+t_one_time,
+						urllist:urllist
+					});
+					circleadd_style += circlestyle.format2({
+						circlename:circlename+t_one_time,
+						circletop:yend,
+						circleleft:xend
+					});
+					var yuantime = runtime+1000;
+					setTimeout(function(){
+						$("."+circlename+t_one_time).addClass("yuanhuaend");
+					},yuantime);
+				}
+			}
+			//resize 翻页 动画重新开始
+			function animaterestart() {
+				treedivappend = "";
+				fdivappend = "";
+				fstyleappend = "";
+				divappend = "";
+				styleappend = "";
+				fendstyle = "";
+				circleadd_style = "";
+				circleadd_div = "";
+				infodivadd = "";
+				page4imagapp ="";
+				p4modalapp = "";
+				$("#newwindow").html("");
+				$(".page4 .smallimg").html("");
+				$(".page3 .divtree").html("");
+				$(".page2 .divtree").html("");
+				$("#newstyle").html("");
+				$("#fendstyle").html("");
+				$("#cendstyle").html("");
+				setanimationarea();
+				inforemove();
+				if (pagenum==2) {
+					drawtree();
+					$(".upicon").css("display","none");
+					page2_time = setTimeout(function(){
+						notnext = false;
+						$(".upicon").css("display","block");
+					},6100);
+				}
+				if (pagenum==1) {
+					$(".upicon").css("display","none");
+					infoanimate();
+					page1_time = setTimeout(function(){
+						notnext = false;
+						$(".upicon").css("display","block");
+					},10100);
+				}
+				if (pagenum==0||pagenum==3) {
+					$(".upicon").css("display","none");
+					if (pagenum==0) {
+						notnext = false;
+					}
+					if (pagenum==3) {
+						//当前页为第四页时执行图片动画
+						putpic();
+						page3_time = setTimeout(function(){
+							notnext = false;
+						},14500);
+					}
+				}
+			}
+			//渐变翻页
+			//页面序号变量
+			var pagenum = 0;
+			var notnext = false;
+			//page2 page3  setTimeout计时器（页面动画完成后upicon显示）
+			var page1_time = "";
+			var page2_time = "";
+			var page3_time = "";
+			function whileclick(n){
+				if (notnext) {
+					return false;
+				}
+				notnext = true;
+				$(".opacity1").removeClass("opacity1");
+				pagenum = pagenum+n;
+				$(".pagecommon").eq(pagenum).addClass("opacity1");
+				animaterestart();
+			}
+			$(".bunext").click(function(){
+				if(pagenum==3){
+					return false;
+				}
+				whileclick(1);
+			});
+			$(".bupre").click(function(){
+				if(pagenum==1){
+					return false;
+				}
+				whileclick(-1);
+			});
+			//计算屏宽高让动画居中显示
+			var treewidth;
+			function setanimationarea(){
+				var dwidth = document.documentElement.clientWidth;
+				var dheight = document.documentElement.clientHeight;
+				var margintopnum;
+				if (dwidth>dheight) {
+					treewidth = dheight;
+					margintopnum = 0;
+				} else{
+					treewidth = dwidth;
+					margintopnum = (dheight-dwidth)/2;
+				}
+				$(".divtree").css({
+					"width":treewidth+"px",
+					"height":treewidth+"px",
+					"margin-top":margintopnum+"px"
+				});
+				var fendsize = treewidth*25/672;
+				var fendrsize = treewidth*30/672;
+				fendstyle = fends.format2({
+					fendsize:fendsize,
+					fendrsize:fendrsize
+				});
+				$("#fendstyle").html(fendstyle);
+				var cendwsize = treewidth*50/672;
+				var cendmsize = cendwsize/2;
+				circleend_style = cir_endstyle.format2({
+					circleendw:cendwsize,
+					circleendm:cendmsize
+				});
+				$("#cendstyle").html(circleend_style);
+			}
+			setanimationarea();
+			function drawtree(){
+				var arrayline = [
+					{startx:312,starty:615,endx:369,endy:482,newstylename:"sytlea",runtime:1000},
+						{startx:369,starty:482,endx:417,endy:366,newstylename:"sytlea_1",runtime:2000,urllist:"img/f_debug.png",circlename:"circle1"},
+						{startx:369,starty:482,endx:321,endy:374,newstylename:"sytlea_2",runtime:2000},
+							{startx:321,starty:374,endx:246,endy:228,newstylename:"sytlea_2_1",runtime:3000},
+								{startx:246,starty:228,endx:260,endy:175,newstylename:"sytlea_2_1_1",runtime:4000,urllist:"img/f_css3.png",circlename:"circle2"},
+								{startx:246,starty:228,endx:163,endy:155,newstylename:"sytlea_2_1_2",runtime:4000,addclassname:"div1"},
+							{startx:321,starty:374,endx:200,endy:270,newstylename:"sytlea_3",runtime:3000,urllist:"img/f_html.png",circlename:"circle3"},
+							{startx:321,starty:374,endx:333,endy:249,newstylename:"sytlea_2_2",runtime:3000},
+								{startx:333,starty:249,endx:326,endy:84,newstylename:"sytlea_2_2_1",runtime:4000,urllist:"img/f_css.png",circlename:"circle4"},
+								{startx:333,starty:249,endx:416,endy:195,newstylename:"sytlea_2_2_2",runtime:4000,addclassname:"div2"},
+					{startx:312,starty:615,endx:431,endy:536,newstylename:"sytleb",runtime:1000},
+						{startx:431,starty:536,endx:428,endy:455,newstylename:"sytleb_1",runtime:2000,addclassname:"div3"},
+						{startx:431,starty:536,endx:515,endy:453,newstylename:"sytleb_2",runtime:2000,urllist:"img/f_jq.png",circlename:"circle5"},
+						{startx:431,starty:536,endx:516,endy:551,newstylename:"sytleb_3",runtime:2000,addclassname:"div4"},
+					{startx:312,starty:615,endx:203,endy:482,newstylename:"sytlec",runtime:1000},
+						{startx:203,starty:482,endx:113,endy:428,newstylename:"sytlec_1",runtime:2000,addclassname:"div5"},
+						{startx:203,starty:482,endx:153,endy:386,newstylename:"sytlec_2",runtime:2000,urllist:"img/f_js.png",circlename:"circle6"},
+						{startx:203,starty:482,endx:213,endy:368,newstylename:"sytlec_3",runtime:2000,addclassname:"div6"},
+					{startx:312,starty:615,endx:270,endy:482,newstylename:"sytled",runtime:1000,urllist:"img/f_ps.png",circlename:"circle7"},
+				];
+				for (var i=0;i<arrayline.length;i++) {
+					var xstart = arrayline[i].startx*treewidth/640;
+					var ystart = arrayline[i].starty*treewidth/640;
+					var xend = arrayline[i].endx*treewidth/640;
+					var yend = arrayline[i].endy*treewidth/640;
+					var newstylename = arrayline[i].newstylename;
+					var runtime = arrayline[i].runtime;
+					var addclassname = arrayline[i].addclassname;
+					var urllist = arrayline[i].urllist;
+					var circlename = arrayline[i].circlename;
+					drowlinetree(xstart,ystart,xend,yend,newstylename,runtime,addclassname,urllist,circlename)
+				}
+				styleappend = treestyleappend+fstyleappend+circleadd_style;
+				divappend = treedivappend+fdivappend+circleadd_div;
+				$("#newstyle").html(styleappend);
+				$(".page3 .divtree").append(divappend);
+			}
+			//屏幕尺寸改变时动画展示区的自适应
+			$(window).resize(function(){
+				clearTimeout(page1_time);
+				clearTimeout(page2_time);
+				clearTimeout(page3_time);
+				notnext = true;
+				animaterestart();
+			});
+			//图片预加载
+			var imgnum = 0; 
+			var imgtotal = 8;
+			var imgarray = [
+				"show1.jpg",
+				"show2.jpg",
+				"show3.jpg",
+				"show4.jpg",
+				"show5.jpg",
+				"show6.jpg",
+				"show7.jpg",
+				"show8.jpg",
+				"show9.jpg",
+				"changepageicon.png",
+				"f_css.png",
+				"f_css3.png",
+				"f_html.png",
+				"f_js.png",
+				"f_ps.png",
+				"f_jq.png",
+				"f_debug.png",
+				"girl2.png",
+				"major.png",
+				"majorname.png",
+				"name.png",
+				"tjj.png",
+				"picture.png",
+				"school.png",
+				"schoolname.png",
+				"sex.png",
+				"up.png"
+			];
+			var t_len = imgarray.length;
+			for (var i=0;i<t_len;i++) {
+				onloadadd(i);
+			}
+			//图片预加载计算进度条动画width
+			function onloadadd(i){
+				var nimag = new Image;
+				nimag.src = "img/"+imgarray[i];
+				nimag.onload = function(){
+					imgnum++;
+					var t_val = Math.floor(imgnum*100/t_len);
+					$(".yoda").css("width",t_val+"%");
+					setTimeout(function(){
+						$(".yoda_val").html(t_val+"%");
+					},500);
+					if (t_val==100) {
+						setTimeout(function(){
+							whileclick(1);
+						},1000);
+						infoanimate();
+					}
+				}
+			}
+			//信息动画数组
+			var delaytime = [
+					{infoid:"info1",time:1000,infoclass:"toptodown"},
+					{infoid:"info2",time:2000,infoclass:"lefttoright"},
+					{infoid:"info3",time:3000,infoclass:"righttoleft"},
+					{infoid:"info4",time:4000,infoclass:"lefttoright"},
+					{infoid:"info5",time:5000,infoclass:"righttoleft"},
+					{infoid:"info6",time:6000,infoclass:"lefttoright"},
+					{infoid:"info7",time:7000,infoclass:"righttoleft"},
+					{infoid:"info8",time:8000,infoclass:"lefttoright"},
+					{infoid:"info9",time:9000,infoclass:"righttoleft"}
+					];
+			//信息动画方法
+			function infoanimate(){
+				var gt_date = new Date();
+				var gt_time = gt_date.getTime();
+				for (var i=0;i<delaytime.length;i++) {
+					var d_time = delaytime[i].time;
+					var infoid = delaytime[i].infoid;
+					var infoclass = delaytime[i].infoclass;
+					infodivadd = infodiv.format2({
+						timeo:gt_time
+					});
+					infodelay(infoid,infoclass,d_time,gt_time);
+				}
+				$(".page2 .divtree").html(infodivadd);
+			}
+			//信息动画延迟方法
+			function infodelay(infoid,infoclass,d_time,gt_time){
+				setTimeout(function(){
+					$("#"+infoid+gt_time).addClass(infoclass);
+				},d_time);
+			}
+			//信息动画remove
+			function inforemove(){
+				for (var i=0;i<delaytime.length;i++) {
+					var infoid = delaytime[i].infoid;
+					var infoclass = delaytime[i].infoclass;
+					$(".divnone").removeClass(infoclass);
+				}
+				
+			}
+			//滑动翻页
+			document.addEventListener("touchstart",touchs,false);
+			document.addEventListener("touchmove",touche,false);
+			var t_start_y;
+			//限制 当滑动间距大于10时不再取t_end_y及计算t_y
+			var huadong = false;
+			function touchs (event){
+				huadong = false;
+		        var event = event || window.event;
+		        t_start_y = event.touches[0].clientY;
+			}
+			function touche (event){
+				if (huadong) {
+					return false;
+				}
+		        var t_end_y = event.touches[0].clientY;
+	            var t_y = t_start_y-t_end_y;
+	            if(Math.abs(t_y)>10){
+	            	huadong = true;
+	            	if (t_y>0) {
+	            		if(pagenum!=3){
+							whileclick(1);
+						}
+	            	}else{
+	            		if(pagenum!=1){
+							whileclick(-1);
+						}
+	            	}
+	           	clog(t_y);
+	            }
+	            
+			}
+		</script>
+	</body>
+</html>
